@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly OpenEduCat backup health check
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=5m
+Persistent=true
+Unit=openeducat-backup-health.service
+
+[Install]
+WantedBy=timers.target

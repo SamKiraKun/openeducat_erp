@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_cloudinary" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.cloudinary</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="40"/>
+        <field name="inherit_id" ref="openeducat_core.res_config_settings_view_form_core"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='openeducat_core']" position="inside">
+                <h2 id="openeducat_cloudinary_storage">Cloudinary Storage</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="cloudinary_enabled"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_enabled"/>
+                            <div class="text-muted">
+                                Store runtime image and file uploads in Cloudinary while keeping Odoo attachment metadata and access control.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_delivery_mode"/>
+                            <field name="cloudinary_delivery_mode"/>
+                            <div class="text-muted">
+                                Start with authenticated delivery for private school files.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_cloud_name"/>
+                            <field name="cloudinary_cloud_name"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_api_key"/>
+                            <field name="cloudinary_api_key"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_api_secret"/>
+                            <field name="cloudinary_api_secret" password="True"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_folder_prefix"/>
+                            <field name="cloudinary_folder_prefix"/>
+                            <div class="text-muted">
+                                Base folder prefix before environment, school code, database, model, and record segments.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_environment_name"/>
+                            <field name="cloudinary_environment_name"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_school_code"/>
+                            <field name="cloudinary_school_code"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane">
+                            <field name="cloudinary_upload_images"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_upload_images"/>
+                            <div class="text-muted">
+                                Store student, faculty, admission, program, and other image uploads in Cloudinary.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane">
+                            <field name="cloudinary_upload_raw_files"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_upload_raw_files"/>
+                            <div class="text-muted">
+                                Store PDFs, documents, spreadsheets, and other binary attachments in Cloudinary.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane">
+                            <field name="cloudinary_delete_remote_on_unlink"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_delete_remote_on_unlink"/>
+                            <div class="text-muted">
+                                Queue remote deletion after the configured retention period.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_delete_retention_days"/>
+                            <field name="cloudinary_delete_retention_days"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box" invisible="cloudinary_enabled == False">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="cloudinary_max_upload_mb"/>
+                            <field name="cloudinary_max_upload_mb"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

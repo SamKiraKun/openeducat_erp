@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenEduCat backup health check
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=odoo
+Group=odoo
+EnvironmentFile=/etc/openeducat/backup.env
+WorkingDirectory=/opt/odoo/custom-addons/openeducat_erp
+ExecStart=/opt/odoo/custom-addons/openeducat_erp/ops/database_dr/bin/check_backup_health.sh

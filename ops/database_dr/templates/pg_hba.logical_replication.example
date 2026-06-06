@@ -1,0 +1,8 @@
+# Allow the Aiven subscriber or a secure replication worker to create the
+# logical replication connection. Replace the CIDR with the exact approved
+# source range.
+hostssl replication aiven_repl CHANGE_ME/32 scram-sha-256
+
+# Allow the same role to connect to the published database for initial table
+# copy and ongoing replication.
+hostssl openeducat_prod aiven_repl CHANGE_ME/32 scram-sha-256

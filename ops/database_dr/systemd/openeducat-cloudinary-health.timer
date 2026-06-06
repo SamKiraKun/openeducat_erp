@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly OpenEduCat Cloudinary health check
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=10m
+Persistent=true
+Unit=openeducat-cloudinary-health.service
+
+[Install]
+WantedBy=timers.target

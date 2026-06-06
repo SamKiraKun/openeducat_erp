@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenEduCat logical replication health schedule
+
+[Timer]
+OnCalendar=*:0/15
+RandomizedDelaySec=2m
+Persistent=true
+Unit=openeducat-replication-health.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Monthly OpenEduCat restore drill
+
+[Timer]
+OnCalendar=*-*-01 03:30:00
+RandomizedDelaySec=15m
+Persistent=true
+Unit=openeducat-restore-drill.service
+
+[Install]
+WantedBy=timers.target

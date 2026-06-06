@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_openeducat_cloudinary_deletion_queue_admin,openeducat.cloudinary.deletion.queue admin,model_openeducat_cloudinary_deletion_queue,base.group_system,1,1,1,1

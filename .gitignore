@@ -34,3 +34,5 @@ nosetests.xml
 .project
 .pydevproject
 .idea
+ops/database_dr/.env
+ops/ubuntu_host/.env

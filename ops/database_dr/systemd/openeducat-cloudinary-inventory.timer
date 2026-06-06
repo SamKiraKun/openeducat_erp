@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily OpenEduCat Cloudinary inventory comparison
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=20m
+Persistent=true
+Unit=openeducat-cloudinary-inventory.service
+
+[Install]
+WantedBy=timers.target

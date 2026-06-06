@@ -1,0 +1,11 @@
+[Unit]
+Description=Nightly OpenEduCat backup schedule
+
+[Timer]
+OnCalendar=*-*-* 02:15:00
+RandomizedDelaySec=10m
+Persistent=true
+Unit=openeducat-backup.service
+
+[Install]
+WantedBy=timers.target
