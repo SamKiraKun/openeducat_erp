@@ -3,6 +3,16 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ "$(id -un)" == "odoo" ]]; then
+    cat >&2 <<'EOF'
+ERROR: do not run this wrapper as the odoo service account.
+Run it as the SSH user that owns the cloned repo and the .env file, for example:
+  ENV_FILE=$PWD/ops/database_dr/.env bash ops/database_dr/bin/run_database_dr.sh discover
+EOF
+    exit 1
+fi
+
 # shellcheck source=ops/database_dr/bin/common.sh
 source "${SCRIPT_DIR}/common.sh"
 

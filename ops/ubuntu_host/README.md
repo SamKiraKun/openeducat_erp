@@ -67,9 +67,13 @@ timers unless you ask it to.
   database exists, run:
 
   ```bash
-  sudo -u odoo ENV_FILE=/etc/openeducat/backup.env \
+  ENV_FILE=/etc/openeducat/backup.env \
     /opt/odoo/custom-addons/openeducat_erp/ops/database_dr/bin/run_database_dr.sh stage1 --skip-restore-drill
   ```
+
+  Run this as the SSH user that owns the cloned repo, not as `odoo`. The DR
+  wrapper reads files from the checkout and the `.env` file, so the `odoo`
+  service account usually cannot read them.
 
   Then enable the timers you actually want.
 

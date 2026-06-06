@@ -131,6 +131,9 @@ having the wrapper create subscriptions directly.
 
 ## Example Commands
 
+Run these as the SSH user that owns the cloned repo and the `.env` file, not
+as the `odoo` service account.
+
 ```bash
 cp ops/database_dr/.env.example ops/database_dr/.env
 chmod 600 ops/database_dr/.env

@@ -19,6 +19,7 @@ die() {
 
 load_env() {
     if [[ -f "${ENV_FILE}" ]]; then
+        [[ -r "${ENV_FILE}" ]] || die "Environment file is not readable: ${ENV_FILE}"
         set -a
         # shellcheck disable=SC1090
         source "${ENV_FILE}"
