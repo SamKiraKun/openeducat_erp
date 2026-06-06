@@ -44,6 +44,10 @@ require_vars() {
     fi
 }
 
+sql_quote_literal() {
+    printf '%s' "$1" | sed "s/'/''/g"
+}
+
 list_databases() {
     local -a dbs=()
 

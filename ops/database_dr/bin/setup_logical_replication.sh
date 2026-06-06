@@ -86,43 +86,42 @@ apply_primary() {
     require_vars PRIMARY_ADMIN_PGHOST PRIMARY_ADMIN_PGPORT PRIMARY_ADMIN_PGUSER PRIMARY_ADMIN_DB REPLICATION_USER REPLICATION_PASSWORD
 
     primary_db_owner="${PRIMARY_DB_OWNER:-${PGUSER:-odoo}}"
+    repl_user_sql="$(sql_quote_literal "${REPLICATION_USER}")"
+    repl_password_sql="$(sql_quote_literal "${REPLICATION_PASSWORD}")"
 
     run_psql_from_prefix PRIMARY_ADMIN "${PRIMARY_ADMIN_DB}" \
-        -v repl_user="${REPLICATION_USER}" \
-        -v repl_password="${REPLICATION_PASSWORD}" \
-        <<'SQL'
-DO $do$
+        <<SQL
+DO \$do\$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'repl_user') THEN
-        EXECUTE format('CREATE ROLE %I WITH LOGIN REPLICATION PASSWORD %L', :'repl_user', :'repl_password');
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${repl_user_sql}') THEN
+        EXECUTE format('CREATE ROLE %I WITH LOGIN REPLICATION PASSWORD %L', '${repl_user_sql}', '${repl_password_sql}');
     ELSE
-        EXECUTE format('ALTER ROLE %I WITH LOGIN REPLICATION PASSWORD %L', :'repl_user', :'repl_password');
-        EXECUTE format('ALTER ROLE %I WITH LOGIN REPLICATION', :'repl_user');
+        EXECUTE format('ALTER ROLE %I WITH LOGIN REPLICATION PASSWORD %L', '${repl_user_sql}', '${repl_password_sql}');
+        EXECUTE format('ALTER ROLE %I WITH LOGIN REPLICATION', '${repl_user_sql}');
     END IF;
 END
-$do$;
+\$do\$;
 SQL
 
     while IFS= read -r db_name; do
         publication_name="$(publication_name_for_db "${db_name}")"
+        pub_name_sql="$(sql_quote_literal "${publication_name}")"
+        repl_user_sql="$(sql_quote_literal "${REPLICATION_USER}")"
+        owner_role_sql="$(sql_quote_literal "${primary_db_owner}")"
         log "Creating publication ${publication_name} on ${db_name}"
 
         run_psql_from_prefix PRIMARY_ADMIN "${PRIMARY_ADMIN_DB}" \
-            -v repl_user="${REPLICATION_USER}" \
             -v db_name="${db_name}" \
             --command="GRANT CONNECT ON DATABASE \"${db_name}\" TO \"${REPLICATION_USER}\";"
 
         run_psql_from_prefix PRIMARY_ADMIN "${db_name}" \
-            -v repl_user="${REPLICATION_USER}" \
-            -v pub_name="${publication_name}" \
-            -v owner_role="${primary_db_owner}" \
-            <<'SQL'
-DO $do$
+            <<SQL
+DO \$do\$
 DECLARE
     schema_name text;
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = :'pub_name') THEN
-        EXECUTE format('CREATE PUBLICATION %I FOR ALL TABLES', :'pub_name');
+    IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = '${pub_name_sql}') THEN
+        EXECUTE format('CREATE PUBLICATION %I FOR ALL TABLES', '${pub_name_sql}');
     END IF;
 
     FOR schema_name IN
@@ -132,20 +131,20 @@ BEGIN
           AND nspname NOT LIKE 'pg_toast%'
           AND nspname NOT LIKE 'pg_temp_%'
     LOOP
-        EXECUTE format('GRANT USAGE ON SCHEMA %I TO %I', schema_name, :'repl_user');
-        EXECUTE format('GRANT SELECT ON ALL TABLES IN SCHEMA %I TO %I', schema_name, :'repl_user');
-        EXECUTE format('GRANT SELECT ON ALL SEQUENCES IN SCHEMA %I TO %I', schema_name, :'repl_user');
+        EXECUTE format('GRANT USAGE ON SCHEMA %I TO %I', schema_name, '${repl_user_sql}');
+        EXECUTE format('GRANT SELECT ON ALL TABLES IN SCHEMA %I TO %I', schema_name, '${repl_user_sql}');
+        EXECUTE format('GRANT SELECT ON ALL SEQUENCES IN SCHEMA %I TO %I', schema_name, '${repl_user_sql}');
         EXECUTE format(
             'ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA %I GRANT SELECT ON TABLES TO %I',
-            :'owner_role', schema_name, :'repl_user'
+            '${owner_role_sql}', schema_name, '${repl_user_sql}'
         );
         EXECUTE format(
             'ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA %I GRANT SELECT ON SEQUENCES TO %I',
-            :'owner_role', schema_name, :'repl_user'
+            '${owner_role_sql}', schema_name, '${repl_user_sql}'
         );
     END LOOP;
 END
-$do$;
+\$do\$;
 SQL
     done < <(list_databases)
 }

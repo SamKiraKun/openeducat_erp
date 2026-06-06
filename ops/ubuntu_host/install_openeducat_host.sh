@@ -71,6 +71,10 @@ ensure_command() {
     command -v "$1" >/dev/null 2>&1 || die "Required command is missing: $1"
 }
 
+sql_quote_literal() {
+    printf '%s' "$1" | sed "s/'/''/g"
+}
+
 ensure_dir() {
     install -d -m "$2" "$1"
 }
@@ -262,36 +266,38 @@ configure_postgresql() {
     log "Ensuring PostgreSQL service is enabled"
     systemctl enable --now postgresql
 
+    local db_user_sql db_password_sql db_name_sql db_owner_sql
+    db_user_sql="$(sql_quote_literal "${ODOO_DB_USER}")"
+    db_password_sql="$(sql_quote_literal "${ODOO_DB_PASSWORD}")"
+    db_name_sql="$(sql_quote_literal "${ODOO_DB_NAME}")"
+    db_owner_sql="$(sql_quote_literal "${ODOO_DB_USER}")"
+
     log "Ensuring PostgreSQL role ${ODOO_DB_USER} exists"
     runuser -u postgres -- psql postgres -v ON_ERROR_STOP=1 \
-        -v db_user="${ODOO_DB_USER}" \
-        -v db_password="${ODOO_DB_PASSWORD}" \
-        <<'SQL'
-DO $do$
+        <<SQL
+DO \$do\$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'db_user') THEN
-        EXECUTE format('CREATE ROLE %I WITH LOGIN CREATEDB PASSWORD %L', :'db_user', :'db_password');
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${db_user_sql}') THEN
+        EXECUTE format('CREATE ROLE %I WITH LOGIN CREATEDB PASSWORD %L', '${db_user_sql}', '${db_password_sql}');
     ELSE
-        EXECUTE format('ALTER ROLE %I WITH LOGIN CREATEDB PASSWORD %L', :'db_user', :'db_password');
-        EXECUTE format('ALTER ROLE %I WITH CREATEDB', :'db_user');
+        EXECUTE format('ALTER ROLE %I WITH LOGIN CREATEDB PASSWORD %L', '${db_user_sql}', '${db_password_sql}');
+        EXECUTE format('ALTER ROLE %I WITH CREATEDB', '${db_user_sql}');
     END IF;
 END
-$do$;
+\$do\$;
 SQL
 
     if [[ "${ODOO_CREATE_APP_DATABASE:-0}" == "1" ]]; then
         log "Ensuring application database ${ODOO_DB_NAME} exists"
         runuser -u postgres -- psql postgres -v ON_ERROR_STOP=1 \
-            -v db_name="${ODOO_DB_NAME}" \
-            -v db_owner="${ODOO_DB_USER}" \
-            <<'SQL'
-DO $do$
+            <<SQL
+DO \$do\$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = :'db_name') THEN
-        EXECUTE format('CREATE DATABASE %I OWNER %I', :'db_name', :'db_owner');
+    IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '${db_name_sql}') THEN
+        EXECUTE format('CREATE DATABASE %I OWNER %I', '${db_name_sql}', '${db_owner_sql}');
     END IF;
 END
-$do$;
+\$do\$;
 SQL
     fi
 }
