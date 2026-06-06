@@ -419,7 +419,8 @@ CLOUDINARY_DELETE_REMOTE_ON_UNLINK=1
 CLOUDINARY_DELETE_RETENTION_DAYS=15
 EOF
 
-    chmod 600 "${DR_ENV_PATH}"
+    chown root:"${ODOO_GROUP}" "${DR_ENV_PATH}"
+    chmod 640 "${DR_ENV_PATH}"
 }
 
 install_dr_units() {
@@ -476,9 +477,9 @@ Next steps:
   2. Create the first Odoo database if you left ODOO_CREATE_APP_DATABASE=0.
   3. Install the needed OpenEduCat modules from Apps.
   4. After the first database exists, run:
-     ENV_FILE=${DR_ENV_PATH} \\
+     sudo -u ${ODOO_USER} ENV_FILE=${DR_ENV_PATH} \\
        ${ADDONS_TARGET_REPO}/ops/database_dr/bin/run_database_dr.sh stage1 --skip-restore-drill
-     Note: run this as the SSH user that owns the cloned repo, not as ${ODOO_USER}.
+     Note: use the deployed repo at ${ADDONS_TARGET_REPO}, not a home-directory clone.
   5. Add TLS once DNS is pointed at the VPS.
 EOF
 }

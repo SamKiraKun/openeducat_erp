@@ -131,8 +131,8 @@ having the wrapper create subscriptions directly.
 
 ## Example Commands
 
-Run these as the SSH user that owns the cloned repo and the `.env` file, not
-as the `odoo` service account.
+For a local/manual checkout with `ops/database_dr/.env`, run these as the SSH
+user that owns that clone and `.env` file.
 
 ```bash
 cp ops/database_dr/.env.example ops/database_dr/.env
@@ -157,6 +157,20 @@ ops/database_dr/bin/compare_cloudinary_inventory.sh
 ops/database_dr/bin/setup_logical_replication.sh check-prereqs
 ops/database_dr/bin/check_replication_health.sh
 ```
+
+For an installed Ubuntu host created by `ops/ubuntu_host/install_openeducat_host.sh`,
+prefer the deployed repo and installed env file:
+
+```bash
+sudo -u odoo ENV_FILE=/etc/openeducat/backup.env \
+  /opt/odoo/custom-addons/openeducat_erp/ops/database_dr/bin/run_database_dr.sh discover
+
+sudo -u odoo ENV_FILE=/etc/openeducat/backup.env \
+  /opt/odoo/custom-addons/openeducat_erp/ops/database_dr/bin/run_database_dr.sh stage1 --skip-restore-drill
+```
+
+That mode is preferred on a live host because `/etc/odoo/odoo.conf` and
+`/var/lib/odoo` are typically owned by `odoo`, not by the SSH user.
 
 If you want a full Odoo recovery drill, set `RESTORE_FILESTORE_ROOT` and keep
 `RESTORE_TARGET_DB_PREFIX` / `RESTORE_TARGET_DB_SUFFIX` empty so the extracted

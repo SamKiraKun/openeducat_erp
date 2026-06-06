@@ -4,11 +4,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ "$(id -un)" == "odoo" ]]; then
+if [[ "$(id -un)" == "odoo" && "${SCRIPT_DIR}" == /home/* ]]; then
     cat >&2 <<'EOF'
-ERROR: do not run this wrapper as the odoo service account.
-Run it as the SSH user that owns the cloned repo and the .env file, for example:
-  ENV_FILE=$PWD/ops/database_dr/.env bash ops/database_dr/bin/run_database_dr.sh discover
+ERROR: do not run this wrapper as the odoo service account from a home-directory clone.
+Use the deployed repo path and the installed env file instead, for example:
+  sudo -u odoo ENV_FILE=/etc/openeducat/backup.env \
+    /opt/odoo/custom-addons/openeducat_erp/ops/database_dr/bin/run_database_dr.sh discover
 EOF
     exit 1
 fi
