@@ -196,6 +196,8 @@ ensure_layout() {
     ensure_dir "${DR_RESTORE_FILESTORE_ROOT}" 750
 
     chown -R "${ODOO_USER}:${ODOO_GROUP}" "${ODOO_HOME}" "${ODOO_DATA_DIR}" "${ODOO_LOG_DIR}" "${DR_BACKUP_ROOT}" "${DR_RESTORE_FILESTORE_ROOT}"
+    chown root:"${ODOO_GROUP}" /etc/odoo /etc/openeducat
+    chmod 750 /etc/odoo /etc/openeducat
 }
 
 prepare_repo_paths() {
