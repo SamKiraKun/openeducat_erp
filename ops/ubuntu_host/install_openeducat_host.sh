@@ -143,7 +143,15 @@ install_base_packages() {
     )
 
     if [[ "${INSTALL_WKHTMLTOPDF:-1}" == "1" ]]; then
-        packages+=(wkhtmltopdf)
+        wkhtmltopdf_candidate="$(
+            apt-cache policy wkhtmltopdf 2>/dev/null | awk '/Candidate:/ { print $2 }'
+        )"
+
+        if [[ -n "${wkhtmltopdf_candidate}" && "${wkhtmltopdf_candidate}" != "(none)" ]]; then
+            packages+=(wkhtmltopdf)
+        else
+            log "WARNING: wkhtmltopdf is not available from apt on this Ubuntu release; skipping it. Install a compatible build manually if you need PDF reports."
+        fi
     fi
 
     if [[ -n "${APT_PACKAGES_EXTRA:-}" ]]; then

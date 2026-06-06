@@ -79,6 +79,9 @@ timers unless you ask it to.
 - Odoo service: `/etc/systemd/system/openeducat.service`
 - nginx site: `/etc/nginx/sites-available/openeducat.conf`
 - DR env: `/etc/openeducat/backup.env`
+- If `wkhtmltopdf` is not available from the Ubuntu apt repo, the installer now
+  skips it with a warning instead of failing the whole setup. You can install a
+  compatible build later if you need PDF reports.
 
 ## Optional Follow-Up
 
